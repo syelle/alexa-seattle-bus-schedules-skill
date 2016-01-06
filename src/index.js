@@ -1,6 +1,6 @@
 'use strict';
 
-var BusSchedule = require('./seattle-bus-schedule');
+var BusSchedule = require('./SeattleBusSchedule');
 
 exports.handler = function(event, context) {
     var alexaSkill = new BusSchedule();
