@@ -2,6 +2,7 @@
 
 ## January
 
+- 6: Finish initial code reorganization.
 - 5: Continued reorganization of code.
 - 4: Start organizing code before continued feature development.
 - 3: Set up git repo.
