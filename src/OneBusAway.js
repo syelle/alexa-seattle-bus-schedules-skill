@@ -6,6 +6,7 @@ var OneBusAway = {};
 
 OneBusAway.requestURL = function(busStopID){
     // DOC: http://developer.onebusaway.org/modules/onebusaway-application-modules/current/api/where/methods/arrivals-and-departures-for-stop.html
+    // EXAMPLE: http://api.pugetsound.onebusaway.org/api/where/arrivals-and-departures-for-stop/1_13830.json?minutesBefore=0&key=
     return 'http://api.pugetsound.onebusaway.org/api/where/arrivals-and-departures-for-stop/1_' + busStopID + '.json?minutesBefore=0&key=' + SkillConfig.OBA_API_KEY;
 };
 
@@ -27,26 +28,71 @@ OneBusAway.getStopInfo = function(busStopID, callback){
     });
 };
 
+OneBusAway.generateArrivalResponse = function(arrivalInfo, requestTime){
+    var busNumber = arrivalInfo.routeShortName;
+    var isRealTimeInfo = arrivalInfo.predicted;
+
+    var arrivalTime = 0;
+
+    if(isRealTimeInfo){
+        arrivalTime = parseInt(arrivalInfo.predictedArrivalTime);
+    } else {
+        arrivalTime = parseInt(arrivalInfo.scheduledArrivalTime);
+    }
+
+    //requestTime and predictedArrivalTime are milliseconds since the epoch, so need to convert to minutes
+    var timeToArrival = Math.round(((arrivalTime - requestTime) / 1000 / 60));
+
+    var speechOutput = ' Route ' + busNumber;
+
+    if(isRealTimeInfo) {
+        speechOutput += ', in ' + timeToArrival;
+    } else {
+        speechOutput += ', is scheduled to arrive in ' + timeToArrival;
+    }
+
+    if (timeToArrival == '1') {
+        speechOutput += ' minute.';
+    } else {
+        speechOutput += ' minutes.';
+    }
+    
+    return speechOutput;
+};
+
 OneBusAway.handleStopInfoRequest = function(intent, session, response){
-    this.getStopInfo(intent.slots.busStop.value, function(stopData){
+    this.getStopInfo(intent.slots.busStop.value, (function(stopData){
+        var requestTime = parseInt(stopData.currentTime);
+        var speechOutput = '';
 
-        if(stopData.data.entry.arrivalsAndDepartures[0].predictedArrivalTime){
-            var busNumber = stopData.data.entry.arrivalsAndDepartures[0].routeShortName;
-            var predictedArrivalTime = stopData.data.entry.arrivalsAndDepartures[0].predictedArrivalTime;
-            var requestTime = stopData.currentTime;
+        var stopArrivals = null;
 
-            //requestTime and predictedArrivalTime are milliseconds since the epoch, so need to convert to minutes
-            var timeToArrival = Math.round(((predictedArrivalTime - requestTime) / 1000 / 60));
-
-            var cardText = 'The next bus, ' + busNumber + ', is arriving in ' + timeToArrival + ' minutes.';
-        } else {
-            var text = 'That bus stop does not exist.'
-            var cardText = text;
+        if (stopData.data !== null && stopData.data.entry !== null){
+            stopArrivals = stopData.data.entry.arrivalsAndDepartures;
         }
 
-        var heading = 'Next bus for stop: ' + intent.slots.busStop.value;
-        response.tellWithCard(cardText, heading, cardText);
-    });
+        if(stopArrivals !== null){
+            // Only return info on the next 3 arrivals
+            var arrivalsToProcess = stopArrivals.slice(0, 3);
+
+            if(arrivalsToProcess.length === 1){
+                speechOutput = 'Here is the next arrival for that stop:';
+            } else {
+                speechOutput = 'Here are the next ' + arrivalsToProcess.length + ' arrivals for that stop:';  
+            }
+            
+            for (var i = 0; i < arrivalsToProcess.length; i++){
+                speechOutput += this.generateArrivalResponse(arrivalsToProcess[i], requestTime);
+            }
+        } else if (stopData.code == 404){
+            speechOutput += 'That bus stop does not exist.';
+        } else {
+            speechOutput += 'I could not get arrival info due to an unknown error. Error code is ' + stopData.code;
+        }
+
+        var cardTitle = 'Next arrivals for stop: ' + intent.slots.busStop.value;
+        response.tellWithCard(speechOutput, cardTitle, speechOutput);
+    }).bind(this));
 };
 
 module.exports = OneBusAway;
