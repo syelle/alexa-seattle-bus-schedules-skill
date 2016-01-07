@@ -29,6 +29,8 @@ OneBusAway.getStopInfo = function(busStopID, callback){
 };
 
 OneBusAway.generateArrivalResponse = function(arrivalInfo, requestTime){
+    var responses = {};
+
     var busNumber = arrivalInfo.routeShortName;
     var isRealTimeInfo = arrivalInfo.predicted;
 
@@ -44,6 +46,7 @@ OneBusAway.generateArrivalResponse = function(arrivalInfo, requestTime){
     var timeToArrival = Math.round(((arrivalTime - requestTime) / 1000 / 60));
 
     var speechOutput = ' Route ' + busNumber;
+    var cardOutput = '- Route ' + busNumber + ': ';
 
     if(isRealTimeInfo) {
         speechOutput += ', in ' + timeToArrival;
@@ -51,19 +54,33 @@ OneBusAway.generateArrivalResponse = function(arrivalInfo, requestTime){
         speechOutput += ', is scheduled to arrive in ' + timeToArrival;
     }
 
+    cardOutput += timeToArrival;
+
     if (timeToArrival == '1') {
         speechOutput += ' minute.';
+        cardOutput += ' minute';
     } else {
         speechOutput += ' minutes.';
+        cardOutput += ' minutes';
+    } 
+
+    if(!isRealTimeInfo){
+        cardOutput += ' (scheduled)';
     }
-    
-    return speechOutput;
+
+    cardOutput += '\n';
+
+    responses.speechResponse = speechOutput;
+    responses.cardResponse = cardOutput;
+
+    return responses;
 };
 
 OneBusAway.handleStopInfoRequest = function(intent, session, response){
     this.getStopInfo(intent.slots.busStop.value, (function(stopData){
         var requestTime = parseInt(stopData.currentTime);
         var speechOutput = '';
+        var cardOutput = '';
 
         var stopArrivals = null;
 
@@ -82,16 +99,19 @@ OneBusAway.handleStopInfoRequest = function(intent, session, response){
             }
             
             for (var i = 0; i < arrivalsToProcess.length; i++){
-                speechOutput += this.generateArrivalResponse(arrivalsToProcess[i], requestTime);
+                var responses = this.generateArrivalResponse(arrivalsToProcess[i], requestTime);
+
+                speechOutput += responses.speechResponse;
+                cardOutput += responses.cardResponse;
             }
         } else if (stopData.code == 404){
-            speechOutput += 'That bus stop does not exist.';
+            speechOutput = cardOutput = 'That bus stop does not exist.';
         } else {
-            speechOutput += 'I could not get arrival info due to an unknown error. Error code is ' + stopData.code;
+            speechOutput = cardOutput = 'I could not get arrival info due to an unknown error. Error code is ' + stopData.code;
         }
 
         var cardTitle = 'Next arrivals for stop: ' + intent.slots.busStop.value;
-        response.tellWithCard(speechOutput, cardTitle, speechOutput);
+        response.tellWithCard(speechOutput, cardTitle, cardOutput);
     }).bind(this));
 };
 
