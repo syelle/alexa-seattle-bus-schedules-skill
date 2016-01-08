@@ -2,6 +2,7 @@
 
 ## January
 
+- 8: Commit intent test event to repo. Start work on "save shortcut for stop" feature.
 - 7: Enhance stop arrival info to report up to the next three arrivals.
 - 6: Finish initial code reorganization.
 - 5: Continued reorganization of code.
