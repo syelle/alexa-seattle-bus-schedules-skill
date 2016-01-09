@@ -10,7 +10,7 @@ OneBusAway.requestURL = function(busStopID){
     return 'http://api.pugetsound.onebusaway.org/api/where/arrivals-and-departures-for-stop/1_' + busStopID + '.json?minutesBefore=0&key=' + SkillConfig.OBA_API_KEY;
 };
 
-OneBusAway.getStopInfo = function(busStopID, callback){
+OneBusAway.getStopArrivals = function(busStopID, callback){
     http.get(this.requestURL(busStopID), function(res){
         var response = '';
 
@@ -76,8 +76,8 @@ OneBusAway.generateArrivalResponse = function(arrivalInfo, requestTime){
     return responses;
 };
 
-OneBusAway.handleStopInfoRequest = function(intent, session, response){
-    this.getStopInfo(intent.slots.busStop.value, (function(stopData){
+OneBusAway.handleStopArrivalsRequest = function(intent, session, response){
+    this.getStopArrivals(intent.slots.busStop.value, (function(stopData){
         var requestTime = parseInt(stopData.currentTime);
         var speechOutput = '';
         var cardOutput = '';

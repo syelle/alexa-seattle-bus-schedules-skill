@@ -19,7 +19,7 @@
           "value": "13830"
         }
       },
-      "name": "GetNextBusIntent"
+      "name": "GetNextArrivalsIntent"
     },
     "type": "IntentRequest",
     "requestId": "request5678"

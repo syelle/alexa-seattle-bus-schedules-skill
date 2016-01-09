@@ -4,8 +4,8 @@ var http           = require('http'),
 
 var registerIntentHandlers = function (intentHandlers, skillContext, SkillConfig) {
 
-	intentHandlers.GetNextBusIntent = function(intent, session, response){
-	    OneBusAway.handleStopInfoRequest(intent, session, response);
+	intentHandlers.GetNextArrivalsIntent = function(intent, session, response){
+	    OneBusAway.handleStopArrivalsRequest(intent, session, response);
 	};
 };
 

@@ -2,3 +2,5 @@ GetNextBusIntent get next bus for stop {one three eight three zero|busStop}
 GetNextBusIntent get next arrival for stop {one three eight three zero|busStop}
 GetNextBusIntent get the next bus for stop {one three eight three zero|busStop}
 GetNextBusIntent get the next arrival for stop {one three eight three zero|busStop}
+
+SaveStopShortcutIntent save stop {one three eight three zero|busStop} as {southbound|shortcutName}

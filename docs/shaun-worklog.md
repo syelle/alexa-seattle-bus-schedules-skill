@@ -2,6 +2,7 @@
 
 ## January
 
+- 9: Refactor name of stop arrivals intent to be more appropriate
 - 8: Commit intent test event to repo. Start work on "save shortcut for stop" feature.
 - 7: Enhance stop arrival info to report up to the next three arrivals.
 - 6: Finish initial code reorganization.

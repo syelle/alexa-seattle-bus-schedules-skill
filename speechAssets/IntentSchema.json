@@ -8,6 +8,19 @@
           "type": "NUMBER"
         }
       ]
+    },
+    {
+      "intent": "SaveStopShortcutIntent",
+      "slots": [
+        {
+          "name": "busStop",
+          "type": "NUMBER"
+        },
+        {
+          "name": "shortcutName",
+          "type": "LITERAL"          
+        }
+      ]
     }
   ]
 }
