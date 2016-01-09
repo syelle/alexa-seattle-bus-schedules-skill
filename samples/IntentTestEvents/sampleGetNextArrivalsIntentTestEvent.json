@@ -1,6 +1,6 @@
 {
   "session": {
-    "new": false,
+    "new": true,
     "sessionId": "session1234",
     "attributes": {},
     "user": {
