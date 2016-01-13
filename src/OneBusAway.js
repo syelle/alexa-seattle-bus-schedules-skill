@@ -1,17 +1,24 @@
 'use strict';
 var http           = require('http'),
+    storage        = require('./Storage'),
     SkillConfig    = require('./Config');
 
 var OneBusAway = {};
 
-OneBusAway.requestURL = function(busStopID){
+OneBusAway.stopArrivalsRequestURL = function(stopNumber){
     // DOC: http://developer.onebusaway.org/modules/onebusaway-application-modules/current/api/where/methods/arrivals-and-departures-for-stop.html
     // EXAMPLE: http://api.pugetsound.onebusaway.org/api/where/arrivals-and-departures-for-stop/1_13830.json?minutesBefore=0&key=
-    return 'http://api.pugetsound.onebusaway.org/api/where/arrivals-and-departures-for-stop/1_' + busStopID + '.json?minutesBefore=0&key=' + SkillConfig.OBA_API_KEY;
+    return 'http://api.pugetsound.onebusaway.org/api/where/arrivals-and-departures-for-stop/1_' + stopNumber + '.json?minutesBefore=0&key=' + SkillConfig.OBA_API_KEY;
 };
 
-OneBusAway.getStopArrivals = function(busStopID, callback){
-    http.get(this.requestURL(busStopID), function(res){
+OneBusAway.stopInfoRequestURL = function(stopNumber){
+    // DOC: http://developer.onebusaway.org/modules/onebusaway-application-modules/1.1.14/api/where/methods/stop.html
+    // EXAMPLE: http://api.pugetsound.onebusaway.org/api/where/stop/1_13830.json?key=
+    return 'http://api.pugetsound.onebusaway.org/api/where/stop/1_' + stopNumber + '.json?key=' + SkillConfig.OBA_API_KEY;
+};
+
+OneBusAway.getViaAPI = function(requestURL, callback){
+    http.get(requestURL, function(res){
         var response = '';
 
         res.on('data', function(data){
@@ -76,11 +83,12 @@ OneBusAway.generateArrivalResponse = function(arrivalInfo, requestTime){
     return responses;
 };
 
-OneBusAway.handleStopArrivalsRequest = function(intent, session, response){
-    this.getStopArrivals(intent.slots.busStop.value, (function(stopData){
-        var requestTime = parseInt(stopData.currentTime);
-        var speechOutput = '';
+OneBusAway.getStopArrivalsByStopNumber = function (stopNumber, response) {
+    this.getViaAPI(this.stopArrivalsRequestURL(stopNumber), (function(stopData){
+
+        var cardTitle = 'Next arrivals for stop: ' + stopNumber;
         var cardOutput = '';
+        var speechOutput = '';
 
         var stopArrivals = null;
 
@@ -89,6 +97,7 @@ OneBusAway.handleStopArrivalsRequest = function(intent, session, response){
         }
 
         if(stopArrivals !== null){
+            var requestTime = parseInt(stopData.currentTime);
             // Only return info on the next 3 arrivals
             var arrivalsToProcess = stopArrivals.slice(0, 3);
 
@@ -110,9 +119,85 @@ OneBusAway.handleStopArrivalsRequest = function(intent, session, response){
             speechOutput = cardOutput = 'I could not get arrival info due to an unknown error. Error code is ' + stopData.code;
         }
 
-        var cardTitle = 'Next arrivals for stop: ' + intent.slots.busStop.value;
         response.tellWithCard(speechOutput, cardTitle, cardOutput);
     }).bind(this));
+};
+
+OneBusAway.handleGetArrivalsByStopNumberRequest = function(intent, session, response){
+    this.getStopArrivalsByStopNumber(intent.slots.busStop.value, response);
+};
+
+OneBusAway.handleStopShortcutRequest = function(intent, session, response){
+    this.getViaAPI(this.stopInfoRequestURL(intent.slots.busStop.value), (function(stopData){
+        var speechOutput = '';
+        var cardOutput = '';
+
+        var stopInfo = null;
+
+        if (stopData.data !== null && stopData.data.entry !== null){
+            stopInfo = stopData.data.entry;
+        }
+
+        if(stopInfo !== null){
+            var stopNumber = stopInfo.code;
+            var stopName = stopInfo.name;
+            var stopDirection = intent.slots.stopDirection.value;
+
+            session.attributes.stopInfo = {};
+            session.attributes.stopInfo.stopNumber = stopNumber;
+            session.attributes.stopInfo.name = stopName;
+            session.attributes.stopInfo.stopDirection = stopDirection;
+
+            speechOutput += 'You asked to save the stop at ' + stopName + ' as ' + stopDirection + '. Is this correct?';
+            response.ask(speechOutput, speechOutput);
+            return;
+        } else if (stopData.code == 404){
+            speechOutput = cardOutput = 'That bus stop does not exist.';
+            response.tell(speechOutput);
+            return;
+        } else {
+            speechOutput = cardOutput = 'I could not get stop info due to an unknown error. Error code is ' + stopData.code;
+            response.tell(speechOutput);
+            return;
+        }
+    }).bind(this));
+};
+
+OneBusAway.handleStopSaveRequest = function(intent, session, response){
+    storage.loadUserStops(session, function (userStops) {
+        var stopData = {
+            id: session.attributes.stopInfo.stopNumber,
+            name: session.attributes.stopInfo.name
+        };
+
+        console.log('userStops before save: ' + JSON.stringify(userStops));
+
+        userStops.data[session.attributes.stopInfo.stopDirection] = stopData;
+
+        userStops.save(function () {
+            response.tell('Your stop has been saved as ' + session.attributes.stopInfo.stopDirection + '.');
+        });
+    });
+};
+
+OneBusAway.handleStopCancelRequest = function(intent, session, response){
+    response.tell('Request cancelled.');
+};
+
+OneBusAway.handleGetArrivalsBySavedStopRequest = function(intent, session, response){
+    storage.loadUserStops(session, function (userStops) {
+        console.log('returned stops: ' + JSON.stringify(userStops));
+        console.log('shortcut name: ' + intent.slots.stopDirection.value);
+        console.log('requested stop: ' + userStops.data[intent.slots.stopDirection.value]);
+
+        var stopNumber = userStops.data[intent.slots.stopDirection.value].id; 
+
+        console.log('got stop with id ' + stopNumber + ' from shortcut name');
+
+        console.log('this: ' + JSON.stringify(this));
+
+        OneBusAway.getStopArrivalsByStopNumber(stopNumber, response); 
+    });
 };
 
 module.exports = OneBusAway;

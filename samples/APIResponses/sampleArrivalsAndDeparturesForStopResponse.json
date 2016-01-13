@@ -29,7 +29,7 @@
             
           ],
           "status": "default",
-          "stopId": "1_13830",
+          "stopNumber": "1_13830",
           "stopSequence": 31,
           "tripHeadsign": "SEATTLE CENTER FREMONT",
           "tripId": "1_29651445",
@@ -94,7 +94,7 @@
             
           ],
           "status": "default",
-          "stopId": "1_13830",
+          "stopNumber": "1_13830",
           "stopSequence": 13,
           "tripHeadsign": "DOWNTOWN SEATTLE UPTOWN",
           "tripId": "1_29669440",
@@ -159,7 +159,7 @@
             
           ],
           "status": "default",
-          "stopId": "1_13830",
+          "stopNumber": "1_13830",
           "stopSequence": 13,
           "tripHeadsign": "DOWNTOWN SEATTLE UPTOWN",
           "tripId": "1_29669560",
@@ -221,7 +221,7 @@
             
           ],
           "status": "default",
-          "stopId": "1_13830",
+          "stopNumber": "1_13830",
           "stopSequence": 13,
           "tripHeadsign": "DOWNTOWN SEATTLE UPTOWN",
           "tripId": "1_29669441",
@@ -259,13 +259,13 @@
           "vehicleId": ""
         }
       ],
-      "nearbyStopIds": [
+      "nearbystopNumbers": [
         "1_14130"
       ],
       "situationIds": [
         
       ],
-      "stopId": "1_13830"
+      "stopNumber": "1_13830"
     },
     "references": {
       "agencies": [
