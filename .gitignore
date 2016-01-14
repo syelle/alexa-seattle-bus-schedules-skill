@@ -4,3 +4,6 @@
 
 # packaging files for Amazon Lambda
 src/*.zip
+
+# configuration files
+src/Config.js
