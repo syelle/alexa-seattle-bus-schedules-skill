@@ -2,6 +2,7 @@
 
 ## January
 
+- 13: Make sure that if a user only opens the skill, they can still get arrival info.
 - 12: Allow for getting arrivals by easy to remember names. Refactor so calling the OBA API and formatting the speech response isn't duplicated logic.
 - 11: Enable saving of stop IDs to easy to remember names.
 - 9: Refactor name of stop arrivals intent to be more appropriate
