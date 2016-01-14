@@ -2,10 +2,9 @@
 
 var registerEventHandlers = function (eventHandlers, skillContext) {
 	eventHandlers.onLaunch = function(launchRequest, session, response){
-	  var output = 'Welcome to Real-Time Seattle Bus Schedules, powered by One Bus Away. ' +
-	    'Say the number of a bus stop to get its next arrivals.';
+	  var output = 'Say the number or saved name of a bus stop to get its next arrivals. You can also say, save a stop.';
 
-	  var reprompt = 'Say the number of a bus stop to get its next arrivals.';
+	  var reprompt = output;
 
 	  response.ask(output, reprompt);
 	};

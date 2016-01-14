@@ -128,39 +128,78 @@ OneBusAway.handleGetArrivalsByStopNumberRequest = function(intent, session, resp
 };
 
 OneBusAway.handleStopShortcutRequest = function(intent, session, response){
-    this.getViaAPI(this.stopInfoRequestURL(intent.slots.busStop.value), (function(stopData){
-        var speechOutput = '';
-        var cardOutput = '';
+    var stopNumber;
+    var stopDirection;
 
-        var stopInfo = null;
+    console.log('stopInfo: ' + JSON.stringify(session.attributes.stopInfo));
 
-        if (stopData.data !== null && stopData.data.entry !== null){
-            stopInfo = stopData.data.entry;
-        }
+    if(session.attributes.stopInfo == null){
+        session.attributes.stopInfo = {};
+    } 
 
-        if(stopInfo !== null){
-            var stopNumber = stopInfo.code;
-            var stopName = stopInfo.name;
-            var stopDirection = intent.slots.stopDirection.value;
+    console.log('intent.slots.busStop.value: ' + intent.slots.busStop.value);
 
-            session.attributes.stopInfo = {};
-            session.attributes.stopInfo.stopNumber = stopNumber;
-            session.attributes.stopInfo.name = stopName;
-            session.attributes.stopInfo.stopDirection = stopDirection;
+    if(intent.slots.busStop.value != null){
+        stopNumber = intent.slots.busStop.value;
+        session.attributes.stopInfo.stopNumber = stopNumber;
+    } else if (session.attributes.stopInfo.stopNumber != null) {
+        stopNumber = session.attributes.stopInfo.stopNumber;
+    }
 
-            speechOutput += 'You asked to save the stop at ' + stopName + ' as ' + stopDirection + '. Is this correct?';
-            response.ask(speechOutput, speechOutput);
-            return;
-        } else if (stopData.code == 404){
-            speechOutput = cardOutput = 'That bus stop does not exist.';
-            response.tell(speechOutput);
-            return;
-        } else {
-            speechOutput = cardOutput = 'I could not get stop info due to an unknown error. Error code is ' + stopData.code;
-            response.tell(speechOutput);
-            return;
-        }
-    }).bind(this));
+    console.log('stopNumber: ' + stopNumber);
+
+    console.log('intent.slots.stopDirection.value: ' + intent.slots.stopDirection.value);
+
+    if(intent.slots.stopDirection.value != null){
+        stopDirection = intent.slots.stopDirection.value;
+        session.attributes.stopInfo.stopDirection = stopDirection;
+    } else if (session.attributes.stopInfo.stopDirection != null) {
+        stopDirection = session.attributes.stopInfo.stopDirection;
+    }
+
+    console.log('stopDirection: ' + stopDirection);
+
+    if(stopNumber == null){
+        var speechOutput = 'To save a stop, say, save stop, followed by the number of the stop you wish to save.';
+        response.ask(speechOutput, speechOutput);
+    } else if (stopDirection == null) {
+        var speechOutput = 'Now, to specify a direction, say, save as, followed by a direction for the stop you wish to save. ' + 
+         'For example, you can say, save as north, or, save as southeast. You can also say, save as downtown, or, save as uptown.';
+        response.ask(speechOutput, speechOutput);
+    }
+
+    if(stopNumber != null && stopDirection != null){
+        this.getViaAPI(this.stopInfoRequestURL(stopNumber), (function(stopData){
+            var speechOutput = '';
+            var cardOutput = '';
+
+            var stopInfo = null;
+
+            if (stopData.data !== null && stopData.data.entry !== null){
+                stopInfo = stopData.data.entry;
+            }
+
+            if(stopInfo !== null){
+                var stopName = stopInfo.name;
+
+                session.attributes.stopInfo.name = stopName;
+                session.attributes.stopInfo.stopNumber = stopNumber;
+                session.attributes.stopInfo.stopDirection = stopDirection;
+
+                speechOutput += 'You asked to save the stop at ' + stopName + ' as ' + stopDirection + '. Is this correct?';
+                response.ask(speechOutput, speechOutput);
+                return;
+            } else if (stopData.code == 404){
+                speechOutput = cardOutput = 'That bus stop does not exist.';
+                response.tell(speechOutput);
+                return;
+            } else {
+                speechOutput = cardOutput = 'I could not get stop info due to an unknown error. Error code is ' + stopData.code;
+                response.tell(speechOutput);
+                return;
+            }
+        }).bind(this));
+    }
 };
 
 OneBusAway.handleStopSaveRequest = function(intent, session, response){
@@ -173,7 +212,12 @@ OneBusAway.handleStopSaveRequest = function(intent, session, response){
         userStops.data[session.attributes.stopInfo.stopDirection] = stopData;
 
         userStops.save(function () {
-            response.tell('Your stop has been saved as ' + session.attributes.stopInfo.stopDirection + '.');
+            response.tell("Your stop has been saved as " + session.attributes.stopInfo.stopDirection + ". " + 
+                "To ask for arrivals, you can now say, ask One Bus Away for " + session.attributes.stopInfo.stopDirection + "bound arrivals."
+            );
+
+            // we must clear out the session's stop info after saving so the next save request starts from scratch
+            session.attributes.stopInfo = null;
         });
     });
 };

@@ -1,11 +1,17 @@
 GetNextArrivalsByStopNumberIntent {one three eight three zero|busStop}
-GetNextArrivalsByStopNumberIntent the next bus for stop {one three eight three zero|busStop}
+GetNextArrivalsByStopNumberIntent arrivals at {one three eight three zero|busStop}
+GetNextArrivalsByStopNumberIntent arrivals for {one three eight three zero|busStop}
+GetNextArrivalsByStopNumberIntent arrivals at stop {one three eight three zero|busStop}
 GetNextArrivalsByStopNumberIntent arrivals for stop {one three eight three zero|busStop}
-GetNextArrivalsByStopNumberIntent get next bus for stop {one three eight three zero|busStop}
-GetNextArrivalsByStopNumberIntent get next arrivals for stop {one three eight three zero|busStop}
-GetNextArrivalsByStopNumberIntent get the next bus for stop {one three eight three zero|busStop}
-GetNextArrivalsByStopNumberIntent get the next arrival for stop {one three eight three zero|busStop}
+GetNextArrivalsByStopNumberIntent get arrivals at {one three eight three zero|busStop}
+GetNextArrivalsByStopNumberIntent get arrivals for {one three eight three zero|busStop}
+GetNextArrivalsByStopNumberIntent get arrivals at stop {one three eight three zero|busStop}
+GetNextArrivalsByStopNumberIntent get arrivals for stop {one three eight three zero|busStop}
 
+SaveStopShortcutIntent save stop
+SaveStopShortcutIntent save a stop
+SaveStopShortcutIntent save stop {one three eight three zero|busStop}
+SaveStopShortcutIntent save as {stopDirection}
 SaveStopShortcutIntent save stop {one three eight three zero|busStop} as {stopDirection}
 
 ConfirmSaveIntent yes
