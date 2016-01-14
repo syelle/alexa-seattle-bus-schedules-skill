@@ -1,0 +1,60 @@
+{
+	"code":200,
+	"currentTime":1452369987757,
+	"data":{
+		"entry":{
+			"code":"13830",
+			"direction":"S",
+			"id":"1_13830",
+			"lat":47.64032,
+			"locationType":0,
+			"lon":-122.376312,
+			"name":"15th Ave W & W Wheeler St",
+			"routeIds":["1_100193","1_102581"],
+			"wheelchairBoarding":"UNKNOWN"
+		},
+		"references":{
+			"agencies":[
+				{
+					"disclaimer":"",
+					"id":"1",
+					"lang":"EN",
+					"name":"Metro Transit",
+					"phone":"206-553-3000",
+					"privateService":false,
+					"timezone":"America/Los_Angeles",
+					"url":"http://metro.kingcounty.gov"
+				}
+			],
+			"routes":[
+				{
+					"agencyId":"1",
+					"color":"",
+					"description":"U-District to Fremont to Interbay to Sea Center W",
+					"id":"1_100193",
+					"longName":"",
+					"shortName":"32",
+					"textColor":"",
+					"type":3,
+					"url":"http://metro.kingcounty.gov/schedules/032/n0.html"
+				},
+				{
+					"agencyId":"1",
+					"color":"",
+					"description":"Seattle Blue Ridge to Crown Hill to Ballard to Sea",
+					"id":"1_102581",
+					"longName":"D-Line Rapid Ride",
+					"shortName":"D Line",
+					"textColor":"",
+					"type":3,
+					"url":"http://metro.kingcounty.gov/travel-options/bus/rapidride/d-line/"
+				}
+			],
+			"situations":[],
+			"stops":[],
+			"trips":[]
+		}
+	},
+	"text":"OK",
+	"version":2
+}

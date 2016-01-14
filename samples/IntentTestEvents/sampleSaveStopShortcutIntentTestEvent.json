@@ -17,9 +17,13 @@
         "busStop": {
           "name": "busStop",
           "value": "13830"
+        },
+        "stopDirection": {
+          "name": "stopDirection",
+          "value": "downtown"
         }
       },
-      "name": "GetNextArrivalsByStopNumberIntent"
+      "name": "SaveStopShortcutIntent"
     },
     "type": "IntentRequest",
     "requestId": "request5678"

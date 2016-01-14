@@ -1,7 +1,7 @@
 {
   "intents": [
     {
-      "intent": "GetNextBusIntent",
+      "intent": "GetNextArrivalsByStopNumberIntent",
       "slots": [
         {
           "name": "busStop",
@@ -17,10 +17,32 @@
           "type": "NUMBER"
         },
         {
-          "name": "shortcutName",
-          "type": "LITERAL"          
+          "name": "stopDirection",
+          "type": "DIRECTION"          
         }
       ]
+    },
+    {
+      "intent": "ConfirmSaveIntent",
+      "slots": [
+      ]
+    },
+    {
+      "intent": "CancelSaveIntent",
+      "slots": [
+      ]
+    },
+    {
+      "intent": "GetNextArrivalsBySavedStopIntent",
+      "slots": [
+        {
+          "name": "stopDirection",
+          "type": "DIRECTION"
+        }
+      ]
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
     }
   ]
 }

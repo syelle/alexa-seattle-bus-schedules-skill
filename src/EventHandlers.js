@@ -2,10 +2,9 @@
 
 var registerEventHandlers = function (eventHandlers, skillContext) {
 	eventHandlers.onLaunch = function(launchRequest, session, response){
-	  var output = 'Welcome to Real-Time Seattle Bus Schedules. ' +
-	    'Say the number of a bus stop to get its next arrival.';
+	  var output = 'Say the number or saved name of a bus stop to get its next arrivals. You can also say, save a stop.';
 
-	  var reprompt = 'Which bus stop do you want to find more about?';
+	  var reprompt = output;
 
 	  response.ask(output, reprompt);
 	};

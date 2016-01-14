@@ -4,7 +4,7 @@
     "sessionId": "session1234",
     "attributes": {},
     "user": {
-      "userId": null
+      "userId": "amzn1.echo-sdk-account.AHO3RYFQOTNZEVPPEMMFXZRMFA2YD2YYIMFTLZFMVN6JR7FFTVLWK"
     },
     "application": {
       "applicationId": "amzn1.echo-sdk-ams.app.cf50bd56-b7ca-4853-9497-9092ba779fd0"
@@ -14,12 +14,12 @@
   "request": {
     "intent": {
       "slots": {
-        "busStop": {
-          "name": "busStop",
-          "value": "13830"
+        "stopDirection": {
+          "name": "stopDirection",
+          "value": "downtown"
         }
       },
-      "name": "GetNextArrivalsByStopNumberIntent"
+      "name": "GetNextArrivalsBySavedStopIntent"
     },
     "type": "IntentRequest",
     "requestId": "request5678"

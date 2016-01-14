@@ -6,7 +6,7 @@ var SkillConfig    = require('./Config'),
 var skillContext = {};
 
 var BusSchedule = function(){
-  AlexaSkill.call(this, SkillConfig.APP_ID);
+	AlexaSkill.call(this, SkillConfig.APP_ID);
 };
 
 BusSchedule.prototype = Object.create(AlexaSkill.prototype);
