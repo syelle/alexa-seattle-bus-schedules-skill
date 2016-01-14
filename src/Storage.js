@@ -41,15 +41,11 @@ var storage = (function () {
 
     return {
         loadUserStops: function (session, callback) {
-			console.log('trying to get the data from session');
-
             if (session.attributes.userStops) {
                 console.log('get stops from session=' + session.attributes.userStops);
                 callback(new UserStops(session, session.attributes.userStops));
                 return;
             }
-
-			console.log('trying to get the data from db for user ' + session.user.userId);
 
             dynamoDB.getItem({
                 TableName: userStopsTableName,
@@ -61,13 +57,10 @@ var storage = (function () {
             }, function (err, data) {
                 var userStops;
 
-                console.log('just read from DB');
-
                 if (err) {
                     console.log(err, err.stack);
                     userStops = new UserStops(session);
                 } else if (data.Item === undefined) {
-                	console.log('record had no data');
                     userStops = new UserStops(session);
                 } else {
                     console.log('get stops from dynamodb=' + data.Item.Data.S);

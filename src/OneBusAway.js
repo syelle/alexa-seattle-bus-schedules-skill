@@ -170,8 +170,6 @@ OneBusAway.handleStopSaveRequest = function(intent, session, response){
             name: session.attributes.stopInfo.name
         };
 
-        console.log('userStops before save: ' + JSON.stringify(userStops));
-
         userStops.data[session.attributes.stopInfo.stopDirection] = stopData;
 
         userStops.save(function () {
@@ -186,15 +184,7 @@ OneBusAway.handleStopCancelRequest = function(intent, session, response){
 
 OneBusAway.handleGetArrivalsBySavedStopRequest = function(intent, session, response){
     storage.loadUserStops(session, function (userStops) {
-        console.log('returned stops: ' + JSON.stringify(userStops));
-        console.log('shortcut name: ' + intent.slots.stopDirection.value);
-        console.log('requested stop: ' + userStops.data[intent.slots.stopDirection.value]);
-
         var stopNumber = userStops.data[intent.slots.stopDirection.value].id; 
-
-        console.log('got stop with id ' + stopNumber + ' from shortcut name');
-
-        console.log('this: ' + JSON.stringify(this));
 
         OneBusAway.getStopArrivalsByStopNumber(stopNumber, response); 
     });
