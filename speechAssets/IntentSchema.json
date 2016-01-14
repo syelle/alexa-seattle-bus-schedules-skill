@@ -40,6 +40,9 @@
           "type": "DIRECTION"
         }
       ]
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
     }
   ]
 }

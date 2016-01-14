@@ -23,6 +23,10 @@ var registerIntentHandlers = function (intentHandlers, skillContext, SkillConfig
 	intentHandlers.GetNextArrivalsBySavedStopIntent = function(intent, session, response){
 	    OneBusAway.handleGetArrivalsBySavedStopRequest(intent, session, response);
 	};
+
+	intentHandlers['AMAZON.HelpIntent'] = function(intent, session, response){
+	    OneBusAway.handleHelpRequest(intent, session, response);
+	};
 };
 
 exports.register = registerIntentHandlers;
