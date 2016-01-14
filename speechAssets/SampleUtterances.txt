@@ -11,6 +11,6 @@ ConfirmSaveIntent yes
 CancelSaveIntent no
 
 GetNextArrivalsBySavedStopIntent {stopDirection} arrivals
-GetNextArrivalsBySavedStopIntent {stopDirection} arrivals
+GetNextArrivalsBySavedStopIntent {stopDirection} bound arrivals
 GetNextArrivalsBySavedStopIntent get {stopDirection} arrivals
 GetNextArrivalsBySavedStopIntent get {stopDirection} bound arrivals
