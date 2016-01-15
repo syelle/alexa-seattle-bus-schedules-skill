@@ -27,6 +27,10 @@ var registerIntentHandlers = function (intentHandlers, skillContext, SkillConfig
 	intentHandlers['AMAZON.HelpIntent'] = function(intent, session, response){
 	    OneBusAway.handleHelpRequest(intent, session, response);
 	};
+
+	intentHandlers['AMAZON.StopIntent'] = function(intent, session, response){
+	    OneBusAway.handleStopRequest(intent, session, response);
+	};
 };
 
 exports.register = registerIntentHandlers;

@@ -238,4 +238,9 @@ OneBusAway.handleHelpRequest = function(intent, session, response){
     response.ask('Say the number or saved name of a bus stop to get its next arrivals. You can also say, save a stop.');
 };
 
+OneBusAway.handleStopRequest = function(intent, session, response){
+    response.shouldEndSession = true;
+    response.tell('Exiting.');
+};
+
 module.exports = OneBusAway;
