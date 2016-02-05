@@ -38,6 +38,10 @@
         {
           "name": "stopDirection",
           "type": "DIRECTION"
+        },
+        {
+          "name": "routeName",
+          "type": "LITERAL"            
         }
       ]
     },
