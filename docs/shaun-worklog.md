@@ -1,7 +1,12 @@
 # 2016
 
+## February
+
+- 4: Finish initial logic allowing user to specify a route and a stop to get arrivals only for that route
+
 ## January
 
+- 31: Begin work on being able to specify a route and a stop to just get arrivals for that route
 - 15: Implement built-in stop intent
 - 14: Implement built-in help intent
 - 13: Make sure that if a user only opens the skill, they can still get arrival info.

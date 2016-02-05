@@ -1,7 +1,8 @@
 'use strict';
-var http           = require('http'),
-    storage        = require('./Storage'),
-    SkillConfig    = require('./Config');
+var http                    = require('http'),
+    storage                 = require('./Storage'),
+    TextToNumberConverter   = require('./TextToNumberConverter'),
+    SkillConfig             = require('./Config');
 
 var OneBusAway = {};
 
@@ -83,7 +84,7 @@ OneBusAway.generateArrivalResponse = function(arrivalInfo, requestTime){
     return responses;
 };
 
-OneBusAway.getStopArrivalsByStopNumber = function (stopNumber, response) {
+OneBusAway.getStopArrivalsByStopNumber = function (stopNumber, routeName, response) {
     this.getViaAPI(this.stopArrivalsRequestURL(stopNumber), (function(stopData){
 
         var cardTitle = 'Next arrivals for stop: ' + stopNumber;
@@ -98,21 +99,53 @@ OneBusAway.getStopArrivalsByStopNumber = function (stopNumber, response) {
 
         if(stopArrivals !== null){
             var requestTime = parseInt(stopData.currentTime);
-            // Only return info on the next 3 arrivals
-            var arrivalsToProcess = stopArrivals.slice(0, 3);
+            var introSpeechOutput = '';
+            var arrivalSpeechOutput = '';
+            var numberOfArrivals = 0;
 
-            if(arrivalsToProcess.length === 1){
-                speechOutput = 'Here is the next arrival for that stop:';
+            if(routeName == null){
+                // Only return info on the next 3 arrivals
+                var arrivalsToProcess = stopArrivals.slice(0, 3); 
+
+                for (var i = 0; i < arrivalsToProcess.length; i++){
+                    numberOfArrivals++;
+
+                    var responses = this.generateArrivalResponse(arrivalsToProcess[i], requestTime);
+                    arrivalSpeechOutput += responses.speechResponse;                      
+                    cardOutput += responses.cardResponse;
+                }
+            }
+            else {
+                var convertedRouteName = TextToNumberConverter.convert(routeName);
+
+                // Only return info on the next three arrivals for the specified route
+                for (var i = 0; i < stopArrivals.length; i++){
+                    if(stopArrivals[i].routeShortName == convertedRouteName){
+                        numberOfArrivals++;
+
+                        var responses = this.generateArrivalResponse(stopArrivals[i], requestTime);
+                        arrivalSpeechOutput += responses.speechResponse;                      
+                        cardOutput += responses.cardResponse;
+                    }  
+                }
+            }
+
+            if(numberOfArrivals === 0){
+                if(routeName != null){
+                    introSpeechOutput = 'I could not find any arrival info for the ' + routeName + ' at that stop.'; 
+                } else{
+                    introSpeechOutput = 'I could not find any arrival info for that stop.';                      
+                }
+                response.tell(introSpeechOutput);       
+                return;       
+            }
+            else if(numberOfArrivals === 1){
+                introSpeechOutput = 'Here is the next arrival for that stop:';
             } else {
-                speechOutput = 'Here are the next ' + arrivalsToProcess.length + ' arrivals for that stop:';  
+                introSpeechOutput = 'Here are the next ' + numberOfArrivals + ' arrivals for that stop:';  
             }
             
-            for (var i = 0; i < arrivalsToProcess.length; i++){
-                var responses = this.generateArrivalResponse(arrivalsToProcess[i], requestTime);
-
-                speechOutput += responses.speechResponse;
-                cardOutput += responses.cardResponse;
-            }
+            speechOutput = introSpeechOutput + arrivalSpeechOutput;
         } else if (stopData.code == 404){
             speechOutput = cardOutput = 'That bus stop does not exist.';
         } else {
@@ -124,7 +157,8 @@ OneBusAway.getStopArrivalsByStopNumber = function (stopNumber, response) {
 };
 
 OneBusAway.handleGetArrivalsByStopNumberRequest = function(intent, session, response){
-    this.getStopArrivalsByStopNumber(intent.slots.busStop.value, response);
+    // second parameter is null because we're not feeding in a route to filter by
+    this.getStopArrivalsByStopNumber(intent.slots.busStop.value, null, response);
 };
 
 OneBusAway.handleStopShortcutRequest = function(intent, session, response){
@@ -230,7 +264,7 @@ OneBusAway.handleGetArrivalsBySavedStopRequest = function(intent, session, respo
     storage.loadUserStops(session, function (userStops) {
         var stopNumber = userStops.data[intent.slots.stopDirection.value].id; 
 
-        OneBusAway.getStopArrivalsByStopNumber(stopNumber, response); 
+        OneBusAway.getStopArrivalsByStopNumber(stopNumber, intent.slots.routeName.value, response); 
     });
 };
 
