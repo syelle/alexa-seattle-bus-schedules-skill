@@ -22,3 +22,10 @@ GetNextArrivalsBySavedStopIntent {stopDirection} arrivals
 GetNextArrivalsBySavedStopIntent {stopDirection} bound arrivals
 GetNextArrivalsBySavedStopIntent get {stopDirection} arrivals
 GetNextArrivalsBySavedStopIntent get {stopDirection} bound arrivals
+
+GetNextArrivalsBySavedStopIntent {stopDirection} {three oh eight|routeName}
+GetNextArrivalsBySavedStopIntent {stopDirection} arrivals for the {D line|routeName}
+GetNextArrivalsBySavedStopIntent {stopDirection} bound arrivals for the {thirty two|routeName}
+GetNextArrivalsBySavedStopIntent get {stopDirection} arrivals for the {three two|routeName}
+GetNextArrivalsBySavedStopIntent get {stopDirection} arrivals for the {three|routeName}
+GetNextArrivalsBySavedStopIntent get {stopDirection} bound arrivals for the {five one seven|routeName}
